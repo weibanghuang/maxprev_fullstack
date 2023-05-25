@@ -237,9 +237,10 @@ function toggle_data(){
             // this.result.split("\n").forEach(element=>workouts.push(element.split(",")));
             // this.result.split("\n").forEach(element=>console.log(element.split(",")));
             //2d import array
-            const import_array = this.result.split("\n");
-            console.log(merge_array(workouts, import_array));
-            workouts = merge_array(workouts, import_array);
+            let import_array = [];
+            this.result.split("\n").forEach(e=>import_array.push([e]));
+            // workouts = merge_array(workouts, import_array);
+            console.log(import_array);
             workouts.sort((a, b) => (a[0] - b[0]) || (a[1] - b[1]));
             updateWorkout();
           });
