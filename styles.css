@@ -1,0 +1,262 @@
+:root {
+    --main-color: #141414;
+    --line-color: #F6F6F6;
+  }
+  
+body{ 
+    background-color: var(--main-color);
+    font-family:Roboto;
+    color: var(--line-color);
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    background-image: url("noise.png");
+}
+
+
+.MP{
+    font-family: Cloister;
+}
+.backwall{
+    background-image: url("background.png");
+    box-sizing: border-box;
+    max-width: 100%;
+    max-height: 100vh;
+    min-height: 100vh;
+    min-width: 100%;
+    padding: 5px;
+    margin: 0;
+    background-size:     cover;                      /* <------ */
+    background-repeat:   no-repeat;
+    background-position: center center;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(Roboto-Thin.ttf);
+}
+
+@font-face {
+    font-family:Cloister;
+    src: url(CloisterBlack.ttf);
+}
+
+.wtf{
+    border-color: var(--line-color);
+    border-width: 1px;
+    padding: 5px;
+    border-style: solid;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+
+.today{
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+.wtf2{
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    max-height: 300px;
+    overflow: auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-color); 
+  }
+
+.name,.rep{
+    padding: 10px;
+    color: var(--line-color);
+    background: transparent;
+    font-family: Roboto;
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 0px;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    width:100%;
+    font-size:16px;
+}
+
+.weight{
+    padding: 10px;
+    color: var(--line-color);
+    background: transparent;
+    font-family: Roboto;
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 0px;
+    box-sizing: border-box;
+    width:100%;
+    font-size:16px;
+}
+
+::placeholder{
+    color: var(--line-color);
+}
+
+.workout_button{
+    padding: 10px;
+    color: var(--line-color);
+    background: transparent;
+    font-family: Roboto;
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    display: flex;
+    margin-right: 5px;
+    font-size:16px;
+}
+
+.clear_button{
+    padding: 10px;
+    color: var(--line-color);
+    background: transparent;
+    font-family: Roboto;
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    display: flex;
+    font-size:16px;
+}
+
+.button_wrap {
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows:1fr,1fr;
+}
+
+.button_wrap_p2 {
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.export_button, .stats_button, .input_button, .import_button, .danger_button{
+    padding:10px;
+    color: var(--line-color);
+    background-color: transparent;
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    font-family: Roboto;
+    display: flex;
+    font-size: 16px;
+}
+
+.input_button{
+    padding:initial;
+    display: none;
+    height: 0px;
+}
+.import_button{
+   margin-bottom: 5px;
+   margin-right: 5px;
+}
+.export_button{
+    margin-bottom: 5px;
+}
+.stats_button{
+    margin-right: 5px;
+}
+
+.danger_button{
+    color: var(--line-color);
+    background-color:#E34234;
+    border-color: var(--line-color);
+}
+
+
+
+.workout_list{
+    padding-bottom: 5px;
+
+}
+.wrap{
+    border-color: var(--line-color);
+    border-width: 1px;
+    padding: 5px;
+    border-style: solid;
+    margin-bottom: 5px;
+    position: relative;
+    font-size: 16px;
+
+}
+
+.duplicate_button{
+    color: var(--line-color);
+    background-color: transparent;
+    font-family: Roboto;
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-family: Cloister;
+}
+
+.delete_button{
+    color: var(--line-color);
+    background-color: transparent;
+    font-family: Roboto;
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-family: Cloister;
+}
+
+.hamburger_button{
+    color: var(--line-color);
+    background: transparent;
+    border-color: var(--line-color);
+    border-width: 1px;
+    border-style: solid;
+    font-family: Roboto;
+    font-size:16px;
+    width: 30px;
+    height: 30px;
+    padding: 0px;
+    text-align: center; 
+    vertical-align:middle;
+    font-family: Cloister;
+}
+
+.logo_bar{
+    padding-right: 5px;
+
+}
+
+.logo_bar_text{
+    display: inline-block;
+    margin-bottom: 5px;
+    border-bottom: #F6F6F6 1px solid;
+    
+}

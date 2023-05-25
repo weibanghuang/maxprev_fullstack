@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MaxPrev</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" /> 
+    <link rel="icon" href="logo.png">
+</head>
+<body>
+    <div class = "backwall">
+        <div class="logo_bar">
+            <div class="MP" style="font-size: 30px;">MAXPREV</div>
+            <div class="logo_bar_text">Find Your Previous Max.</div>
+        </div>
+        <div class="wtf">
+                <button class="hamburger_button">H</button>
+            <div class="pop_up"></div>
+        </div>
+        <div class = "render_stats"></div>
+        <div class="wtf">
+            <input id = "local_name" class = "name" type="text" placeholder="Workout Name" onkeyup='saveValue(this);'>
+            <input id = "local_rep" class ="rep" type="text" placeholder="Repetitions" onkeyup='saveValue(this);'>
+            <input id = "local_weight" class ="weight" type="text" placeholder="Pounds" onkeyup='saveValue(this);'>
+            <div class = "button_wrap_p2">
+                <button class="workout_button">Submit</button>
+                <button class="clear_button">Clear</button>
+            </div>
+            
+        </div>
+        <div class = "today">Only Showing Today's</div>
+        <div class = "workout_list"></div>
+    </div>
+   
+    
+    <script src="script.js"></script>
+</body>
+</html>
