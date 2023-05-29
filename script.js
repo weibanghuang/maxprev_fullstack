@@ -1,8 +1,11 @@
 let workouts = JSON.parse(localStorage.getItem("workouts")) || [];
 let maxPrev = [];
+let database_workouts = [];
+let database_url = "";
 let local_name = JSON.parse(localStorage.getItem("local_name")) || "";
 let local_rep = JSON.parse(localStorage.getItem("local_rep")) || "";
 let local_weight = JSON.parse(localStorage.getItem("local_weight")) || "";
+
 updateWorkout();
 document.getElementById("local_name").value = local_name;  
 document.getElementById("local_rep").value = local_rep;  
@@ -22,6 +25,7 @@ function saveLocalValue(a,b,c){
 document.querySelector('.workout_button')
   .addEventListener('click', () => {
     addWorkout();
+    window.location.reload();
   });
 
 document.querySelector('.clear_button')
@@ -70,8 +74,17 @@ function addWorkout(){
     const second = double_format(today.getSeconds());
 
     const time = hour + "" + minute + "" + second;
-
-    workouts.push([date,time,name,rep,weight]);
+    fetch('url.txt')
+    .then(response => response.text())
+    .then(text => 
+      myFetch(text, "POST", {
+        "year": date,
+        "date": time,
+        "name": toTitleCase(name),
+        "rep": rep,
+        "weight": weight
+    } ))
+    workouts.push([date,time,toTitleCase(name),rep,weight]);
     updateWorkout();
 }
 
@@ -83,58 +96,89 @@ function clearWorkout(){
 }
 
 function updateWorkout(){
-    let workoutHTML = '';
-    for (i in workouts) {
-      workouts[i][2] = toTitleCase(workouts[i][2].toString());
-    } 
-    for (let i = workouts.length-1; i >=0; i--) {
-      const workoutObject = workouts[i];
-      const date = workoutObject[0];
-      const year = date.substr(0,4);
-      const month = date.substr(4,2);
-      const day = date.substr(6,2);
-      const today = new Date();
-      const year1 = double_format(today.getFullYear());
-      const month1 = double_format(today.getMonth()+1);
-      const day1 = double_format(today.getDate());
-      if (month == month1 && year == year1 && day == day1){
-        const time = workoutObject[1];
-        let hour = time.substr(0,2);
-        let minute = time.substr(2,2);
-        let second = time.substr(4,2);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        if (hour >=13){
-          hour = hour - 12;
-        }else if (hour == 0){
-          hour = 12
-        }
-        const html = `
-          <div class="wrap"> 
-            <div class="wrap_list">${year+'/'+month+'/'+day}</div>
-            <div class="wrap_list">${hour+':'+minute+':'+second+' '+ampm}</div>
-            <div class="wrap_list">${workoutObject[2]}</div>
-            <div class="wrap_list">${workoutObject[3]} reps</div>
-            <div class="wrap_list">${workoutObject[4]} pounds</div>
-            <button class="delete_button">X</button>
-          </div>
-        `;
-        workoutHTML += html;
+  let workoutHTML = '';
+  fetch('url.txt')
+  .then(response => response.text())
+  .then(text => 
+    myFetch(text, "GET")
+      .then(res=>{
+        res.forEach(e => 
+          database_workouts.push([e.year, e.date, e.name, e.rep, e.weight])
+          )
+        return database_workouts;
       }
-    }
-
-    document.querySelector('.workout_list')
-    .innerHTML = workoutHTML;
-
-    localStorage.setItem('workouts',JSON.stringify(workouts));
-    
-    //static waiting for listen. didnt work before because it was outside of updateWorkout
-    document.querySelectorAll('.delete_button')
-      .forEach((deleteButton, index) => {
-        deleteButton.addEventListener('click', () => {
-          workouts.splice(workouts.length-1-index, 1);
-          updateWorkout();
+      )
+      .then( e=> {
+        workouts = database_workouts;
+        database_workouts = [];
+        for (i in workouts) {
+          workouts[i][2] = toTitleCase(workouts[i][2].toString());
+        } 
+        for (let i = workouts.length-1; i >=0; i--) {
+          const workoutObject = workouts[i];
+          const date = workoutObject[0];
+          const year = date.substr(0,4);
+          const month = date.substr(4,2);
+          const day = date.substr(6,2);
+          const today = new Date();
+          const year1 = double_format(today.getFullYear());
+          const month1 = double_format(today.getMonth()+1);
+          const day1 = double_format(today.getDate());
+          if (month == month1 && year == year1 && day == day1){
+            const time = workoutObject[1];
+            let hour = time.substr(0,2);
+            let minute = time.substr(2,2);
+            let second = time.substr(4,2);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            if (hour >=13){
+              hour = hour - 12;
+            }else if (hour == 0){
+              hour = 12
+            }
+            const html = `
+              <div class="wrap"> 
+                <div class="wrap_list">${year+'/'+month+'/'+day}</div>
+                <div class="wrap_list">${hour+':'+minute+':'+second+' '+ampm}</div>
+                <div class="wrap_list">${workoutObject[2]}</div>
+                <div class="wrap_list">${workoutObject[3]} reps</div>
+                <div class="wrap_list">${workoutObject[4]} pounds</div>
+                <button id = ${"delete_button"+i} class="delete_button">X</button>
+              </div>
+            `;
+            workoutHTML += html;
+          }
+        }
+      
+        document.querySelector('.workout_list')
+        .innerHTML = workoutHTML;
+      
+        localStorage.setItem('workouts',JSON.stringify(workouts));
+        
+        //static waiting for listen. didnt work before because it was outside of updateWorkout
+       
+        document.querySelectorAll('.delete_button')
+          .forEach((deleteButton, index) => {
+            deleteButton.addEventListener('click', () => {
+              const delete_index = deleteButton.id.slice(-1);
+              fetch('url.txt')
+              .then(response => response.text())
+              .then(text => {
+                myFetch(encodeURI(text+"/"+workouts[delete_index][0]+"/"+workouts[delete_index][1]+"/"+workouts[delete_index][2]), "DELETE");
+                updateWorkout()
+                window.location.reload()
+              })
+              // .then(
+              //   workouts.splice(delete_index, 1)
+              // )
+              // .then(
+              //   updateWorkout()
+              // )
+              
+            });
         });
-    });
+      })
+      
+  )
 }
 
 function export_data(){
@@ -238,9 +282,10 @@ function toggle_data(){
             // this.result.split("\n").forEach(element=>console.log(element.split(",")));
             //2d import array
             let import_array = [];
-            this.result.split("\n").forEach(e=>import_array.push([e]));
+            //doesnt check for empty csv, empty csv returns "" for this result split \n
+            this.result.split("\n").forEach(e=>import_array.push(e.split(",")));
             // workouts = merge_array(workouts, import_array);
-            console.log(import_array);
+            workouts = merge_array(workouts, import_array);
             workouts.sort((a, b) => (a[0] - b[0]) || (a[1] - b[1]));
             updateWorkout();
           });
@@ -269,47 +314,22 @@ document.querySelector('.hamburger_button')
   });
 
 
-// DATABASE CONNECTION 
-
-let database_url = "";
-function readTextFile(file, callback) {
-  var rawFile = new XMLHttpRequest();
-  rawFile.overrideMimeType("application/json");
-  rawFile.open("GET", file, true);
-  rawFile.onreadystatechange = function() {
-      if (rawFile.readyState === 4 && rawFile.status == "200") {
-          callback(rawFile.responseText);
-      }
-  }
-  rawFile.send(null);
-}
 
 function merge_array(a,b){
-  if (a==[] && b ==[]){
-    return []
+  // console.log("a",a,"b",b);
+  if (a.length == 0 && b.length == 0){
+    return [];
   }
-  if (a == []){
+  if (a.length == 0){
     return b;
   }
-  if (b ==[]){
+  if (b.length == 0){
     return a;
   }
   const
     customSlice = b => b.slice(0,2),
     splice_array = b.map(customSlice);
   let checker = true;
-  // splice_array.forEach((splice_element, splice_index) => 
-  //   a.forEach((a_element)=>
-  //     if (a_element.includes(splice_element[0])&&a_element.includes(splice_element[1])){
-  //       checker = false;
-  //       break;
-  //     }
-  //   );
-  //   if (checker==true){
-  //     a.push(b[splice_index]);
-  //   }
-
-  // );
   for (let splice_i = 0; splice_i < splice_array.length; splice_i++){
     for (let a_i = 0; a_i < a.length ; a_i ++){
       if (a[a_i].includes(splice_array[splice_i][0])&&a[a_i].includes(splice_array[splice_i][1])){
@@ -323,28 +343,91 @@ function merge_array(a,b){
       checker = true; 
     }
   }
+  // console.log("result", a);
   return a;
 }
-//usage:
-readTextFile("../url.json", function(text){
-  var data = JSON.parse(text);
-  database_url = data[0].url;
-
-  async function getResponse() {
-    try{
-      const response = await fetch(database_url);
-      const data = await response.json();
-      return await data;
-    }catch(error){
-      return {};
-    }
-  }
   
-  (async () => {
-    const result = await getResponse();
-    console.log(result);
-  })()
-});
 
+
+
+// DATABASE CONNECTION AND FETCH
+
+
+function myFetch(url, type, data) {
+
+  /* GET */
+  if (type === "GET") {
+  return fetch(url, {
+  method: type,
+  headers: {
+      'Content-type': 'application/json'
+  }
+  })
+  .then(res => {
+      if (res.ok) { console.log("HTTP request successful") }
+      else { console.log("HTTP request unsuccessful") }
+      return(res)
+  })
+  .then(res => res.json())
+  .then(data => data)
+  .catch(error => error)
+  }
+
+  /* DELETE */
+  if (type === "DELETE") {
+  return fetch(url, {
+  method: type,
+  headers: {
+      'Content-type': 'application/json'
+  }
+  })
+  .then(res => {
+      if (res.ok) { console.log("HTTP request successful") }
+      else { console.log("HTTP request unsuccessful") }
+      return res
+  })
+  .catch(error => error)
+  }
+
+  /* POST or PUT */
+  if (type === "POST" | type === "PUT") {
+  return fetch(url, {
+  method: type,
+  headers: {
+      'Content-type': 'application/json'
+  },
+  body: JSON.stringify(data)
+  })
+  .then(res => {
+      if (res.ok) { console.log("HTTP request successful") }
+      else { console.log("HTTP request unsuccessful") }
+      return res
+  })
+  .then(res => res.json())
+  .then(data => data)
+  .catch(error => error)
+  }
+}
+
+
+//usage:
+//   async function getResponse() {
+//     try{
+//       const response = await fetch(database_url);
+//       const data = await response.json();
+//       return await data;
+//     }catch(error){
+//       return {};
+//     }
+//   }
+  
+//   (async () => {
+//     const result = await getResponse();
+//     result.forEach(e => 
+//       database_workout.push([e.year, e.date, e.name, e.rep, e.weight])
+//       );
+//     workouts = merge_array(workouts, database_workout);
+//   })()
+// });
 
 
